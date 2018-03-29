@@ -17,6 +17,8 @@ class Order:
     V3_VERSION = '/v3'
 
     ORDER_TEST_PATH = '/order/test'
+    ACCOUNT_INFO_PATH = '/account'
+
 
     RECV_WINDOW = '1000'
 
@@ -24,31 +26,24 @@ class Order:
     
 
 
-    def __init__(self, key, secret, params):
+    def __init__(self, key, secret, params=None):
         
         self.API_KEY = key
         self.API_SECRET = secret
         self.PARAMS = params
     
-    def printargs(self):
-
-        print("Your API Key is:" + self.API_KEY)
-
-        print("Your Secret is:" + self.API_SECRET)
-        print(self.PARAMS)
-
-
     def create_Header(self):
 
         header = {self.HEADER : self.API_KEY}
 
         return header
 
-    def create_URL(self):
+
+    def create_private_URL(self, path):
 
         version = self.V3_VERSION
 
-        return self.API_BASE + version + self.ORDER_TEST_PATH
+        return self.API_BASE + version + path
 
 
     def create_Signature(self):
@@ -58,8 +53,10 @@ class Order:
 
         parameters = collections.OrderedDict()
 
-        parameters.update(self.PARAMS)
-
+        if self.PARAMS != None:
+            parameters.update(self.PARAMS)
+        
+        
         parameters['recvWindow'] = self.RECV_WINDOW
         parameters['timestamp'] = self.TIME_STAMP
 
@@ -77,8 +74,27 @@ class Order:
         return parameters
 
     def test_Order(self):
+        
+        url = Order.create_private_URL(self, self.ORDER_TEST_PATH)
+        headers = Order.create_Header(self)
+        params = Order.create_Signature(self)
 
-        call = requests.post(Order.create_URL(self), headers=Order.create_Header(self), params=Order.create_Signature(self))
+        call = requests.post(url, headers=headers, params=params)
+        
 
         print(call.json())
 
+    def check_Account(self):
+        
+        url = Order.create_private_URL(self, self.ACCOUNT_INFO_PATH)
+        headers = Order.create_Header(self)
+        params = Order.create_Signature(self)
+        
+        call = requests.get(url, headers=headers, params=params)
+        
+        call = call.json()
+
+        return call
+
+
+            
