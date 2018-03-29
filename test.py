@@ -2,7 +2,7 @@ import order
 import requests
 import sys
 import urllib
-
+import binance_socket
 
 def get_symbols():    
 
@@ -23,7 +23,58 @@ def get_symbols():
     
     return available_symbols
 
+def get_available_balances(balance):
 
+    raw_balance_list = balance.get('balances')
+    
+    place_holder_list = []
+
+    available_balances = {}
+
+    for i in range(len(raw_balance_list)):
+
+        place_holder_list.append(i)
+
+    for i in place_holder_list:
+
+        if float(raw_balance_list[i].get('free')) > 0.00000000:
+            
+            asset_key = raw_balance_list[i].get('asset')
+            asset_value = float(raw_balance_list[i].get('free'))
+            
+            available_balances[asset_key] = asset_value
+
+    return available_balances
+
+def check_if_order_is_possible(params, available_balances):
+    
+    parameters = params
+
+    request_symbol = parameters.get('symbol')
+    request_quantity = float(parameters.get('quantity'))
+    
+    request_order_side = parameters.get('side')
+
+    balances = available_balances
+
+    assets_list = list(balances.keys())
+
+    asset_balance = 0.0
+    
+    for i in assets_list:
+
+        if request_symbol.startswith(i):
+
+            asset_balance = float(balances.get(i))
+            asset_listing = i
+
+    if request_order_side == 'SELL' and asset_balance >= request_quantity:
+        
+        return True
+ 
+    else:
+        print("Inadequate. Asset balance for %s is: %f" % (asset_listing, asset_balance))
+        return False
 
 def get_args(arguments):
 
@@ -88,19 +139,41 @@ def get_args(arguments):
 
 def main():
     
-    if len(sys.argv) > 1:
-        arguments = sys.argv[1:]
-    
-    params = get_args(arguments)
-    
     api_key = ''
     secret_key = ''
-
-    user = order.Order(api_key, secret_key, params)
-
-    order.Order.printargs(user)    
     
-    order.Order.test_Order(user)
+    user = order.Order(api_key, secret_key)
+                
+    balances_data = order.Order.check_Account(user)       
+    
+    available_balances = get_available_balances(balances_data)
+    
+
+    if len(sys.argv) > 1:
+        
+        arguments = sys.argv[1:]
+    
+        params = get_args(arguments)
+
+    else:
+        print("Parameter input error. Please check and try again.")
+    
+    
+    order_possibility = check_if_order_is_possible(params, available_balances)
+
+    if order_possibility == True:
+
+        user_order = order.Order(api_key, secret_key, params)
+        
+        order.Order.test_Order(user_order)
+
+    else:
+        print("You don't have a sufficient balance to perform this order")
+
+
+    new_socket = binance_socket.Websocket('bnbbtc', '@ticker') 
+
+    print_socket = binance_socket.Websocket.websocket_connect(new_socket)
 
 if __name__ == "__main__":
     main() 
