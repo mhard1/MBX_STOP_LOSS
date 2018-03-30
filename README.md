@@ -5,7 +5,8 @@ This program is intended to simulate setting up a STOP_LOSS_MARKET SELL order ty
 To run this file you will need the following:
   1) All of the files in this repository.
   2) A working API key and secret key for Binance.
- 
+  3) An actual sufficient balance of the symbol that you want to test the simulation on.
+
 In addition, this program is run from the command line by inputting your parameters.
 
 For example, if you wanted to simulate a market sell stop loss order of 10.0 BNB for BTC at a price of 0.0014500 you would enter the following into the command line: "python3 real.py BNBBTC STOP_LOSS_MARKET SELL 10.0 @ 0.0014500".
