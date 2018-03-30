@@ -20,11 +20,8 @@ class Order:
     ACCOUNT_INFO_PATH = '/account'
 
 
-    RECV_WINDOW = '1000'
-
-    TIME_STAMP = str(int(round(time.time() * 1000)))
+    RECV_WINDOW = '5000'
     
-
 
     def __init__(self, key, secret, params=None):
         
@@ -58,7 +55,7 @@ class Order:
         
         
         parameters['recvWindow'] = self.RECV_WINDOW
-        parameters['timestamp'] = self.TIME_STAMP
+        parameters['timestamp'] = str(int(round(time.time() * 1000)))
 
 
         HASH_MESSAGE = urllib.parse.urlencode(parameters)

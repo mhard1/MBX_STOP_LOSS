@@ -1,9 +1,9 @@
 import websocket
 import ssl
 from websocket import create_connection
+from ast import literal_eval
 
-
-class Websocket():
+class Binsocket():
 
     BASE_ENDPOINT = "wss://stream.binance.com:9443/ws/"
     
@@ -47,24 +47,33 @@ class Websocket():
     DEPTH_LEVEL_20 = "20"
 
     
-    def __init__(self, symbol, stream):
+    def __init__(self, symbol, stream, price):
         self.SYMBOL = symbol
         self.STREAM = stream
+        self.STOP_PRICE = price
 
-    def websocket_connect(self):
+    def connected(self):
+        
+        stop_price = self.STOP_PRICE
+
+        status = False
 
         ws = websocket.WebSocket(sslopt={"cert_reqs": ssl.CERT_NONE})
 
         ws.connect(self.BASE_ENDPOINT+self.SYMBOL+self.STREAM)
- 
-        run = True
-        try:
-            while run == True:
-                print(ws.recv())
-    
-        except KeyboardInterrupt:
-            run = False
-    
+
+        while status == False:
+            
+            dict_message = literal_eval(ws.recv())
+
+            latest_price = float(dict_message.get('c'))
+
+            if latest_price <= stop_price:
+
+                status = True
+        
         ws.close()
 
-    
+        return status
+
+
