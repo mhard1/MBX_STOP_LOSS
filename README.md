@@ -8,7 +8,7 @@ To run this file you will need the following:
  
 In addition, this program is run from the command line by inputting your parameters.
 
-For example, if you wanted to simulate a market sell stop loss order of 10.0 BNB for BTC at a price of 0.0014500 you would enter the following into the command line: "real.py BNBBTC STOP_LOSS_MARKET SELL 10.0 @ 0.0014500".
+For example, if you wanted to simulate a market sell stop loss order of 10.0 BNB for BTC at a price of 0.0014500 you would enter the following into the command line: "python3 real.py BNBBTC STOP_LOSS_MARKET SELL 10.0 @ 0.0014500".
 
 The order does not matter, however you must include an "@" before the trigger price for your stop loss market sale.
 
@@ -21,7 +21,7 @@ Although this project can be used to actually place an order of this type, this 
 
 This program is in no way affiliated with Binance, and is in no way intended for you to use with your Binance account or any account.
 
-You assume full repsonsibility for your use of this code and the author of this code is in no way repsonsible for your use of this code.
+You agree to assume full repsonsibility for your use of this code and the author of this code is in no way repsonsible for your use of this code.
 
 ***********
 
